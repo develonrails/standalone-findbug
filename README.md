@@ -10,16 +10,6 @@ Originally based on [ITSSOUMIT/findbug](https://github.com/ITSSOUMIT/findbug) by
 - **Sentry SDK compatibility** — Receives data via the standard Sentry envelope protocol (`POST /api/:project_id/envelope/`), so you can use the official `sentry-rails` gem as a client
 - **Independent deployment** — Runs as its own Docker Compose stack with PostgreSQL and Valkey
 
-## Features
-
-- Error tracking with grouping by fingerprint, backtrace, and context
-- Performance monitoring with duration, DB time, and view time breakdown
-- N+1 query detection from Sentry transaction spans
-- Configurable alert channels (Slack, Discord, email, webhook)
-- Data scrubbing for sensitive fields (passwords, tokens, credit cards)
-- Redis/Valkey buffering with circuit breaker for resilient ingestion
-- Dark theme dashboard
-
 ## Quick Start
 
 ```bash

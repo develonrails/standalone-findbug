@@ -1,0 +1,65 @@
+x-findbug-env: &findbug-env
+  DATABASE_URL: postgres://findbug:${POSTGRES_PASSWORD:-findbug}@postgres:5432/findbug
+  FINDBUG_REDIS_URL: redis://valkey:6379/1
+  SECRET_KEY_BASE: ${SECRET_KEY_BASE}
+  RAILS_ENV: production
+  RAILS_LOG_TO_STDOUT: "true"
+  FINDBUG_HOST: ${FINDBUG_HOST:-localhost}
+  FINDBUG_USERNAME: ${FINDBUG_USERNAME:-}
+  FINDBUG_PASSWORD: ${FINDBUG_PASSWORD:-}
+
+services:
+  web:
+    build: .
+    ports:
+      - "${PORT:-80}:80"
+    environment:
+      <<: *findbug-env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      valkey:
+        condition: service_healthy
+    restart: unless-stopped
+
+  worker:
+    build: .
+    command: bundle exec rails solid_queue:start
+    environment:
+      <<: *findbug-env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      valkey:
+        condition: service_healthy
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:18
+    volumes:
+      - postgres-data:/var/lib/postgresql
+    environment:
+      POSTGRES_USER: findbug
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-findbug}
+      POSTGRES_DB: findbug
+    healthcheck:
+      test: pg_isready -U findbug
+      interval: 2s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  valkey:
+    image: valkey/valkey:8-alpine
+    volumes:
+      - valkey-data:/data
+    healthcheck:
+      test: valkey-cli ping
+      interval: 2s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
+  valkey-data:

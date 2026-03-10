@@ -1,0 +1,20 @@
+{
+  "name": "findbug",
+  "dockerComposeFile": "compose.yaml",
+  "service": "rails-app",
+  "workspaceFolder": "/workspaces/findbug-standalone",
+
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {},
+    "ghcr.io/rails/devcontainer/features/postgres-client": {}
+  },
+
+  "containerEnv": {
+    "DB_HOST": "postgres",
+    "FINDBUG_REDIS_URL": "redis://valkey:6379/1"
+  },
+
+  "forwardPorts": [3000],
+
+  "postCreateCommand": "bin/setup --skip-server"
+}

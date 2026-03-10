@@ -1,0 +1,57 @@
+<h1><%= @project.name %></h1>
+<p class="page-description">Project configuration and DSN details.</p>
+
+<div class="card" style="max-width: 700px;">
+  <div class="card-header">
+    <h2 class="card-title">DSN Configuration</h2>
+    <span class="badge badge-info"><%= @project.platform %></span>
+  </div>
+  <div class="card-content">
+    <div style="display: grid; gap: 1.5rem;">
+      <div>
+        <div class="stat-label" style="margin-bottom: 0.5rem;">Your DSN</div>
+        <div class="code-block" style="user-select: all;"><%= @project.dsn %></div>
+      </div>
+
+      <div class="separator"></div>
+
+      <div>
+        <div class="stat-label" style="margin-bottom: 0.5rem;">Client Configuration (Ruby / sentry-rails)</div>
+        <div class="code-block">
+          <pre># Gemfile
+gem "sentry-ruby"
+gem "sentry-rails"
+
+# config/initializers/sentry.rb
+Sentry.init do |config|
+  config.dsn = "<%= @project.dsn %>"
+  config.breadcrumbs_logger = [:active_support_logger, :http_logger]
+  config.enabled_environments = %w[production]
+  config.traces_sample_rate = 1.0
+end</pre>
+        </div>
+      </div>
+
+      <div class="separator"></div>
+
+      <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+        <div>
+          <div class="stat-label">Error Events</div>
+          <div class="stat-value" style="font-size: 1.5rem;"><%= @project.error_events.count %></div>
+        </div>
+        <div>
+          <div class="stat-label">Performance Events</div>
+          <div class="stat-value" style="font-size: 1.5rem;"><%= @project.performance_events.count %></div>
+        </div>
+        <div>
+          <div class="stat-label">Created</div>
+          <div class="text-sm" style="margin-top: 0.5rem;"><%= @project.created_at.strftime("%Y-%m-%d") %></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top: 1.5rem;">
+  <a href="<%= projects_path %>" class="btn btn-ghost">&larr; Back to Projects</a>
+</div>

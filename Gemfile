@@ -14,7 +14,7 @@ gem "thruster", require: false
 
 # Redis for event buffering and alert throttling
 gem "redis", "~> 5.0"
-gem "connection_pool", "~> 2.4"
+gem "connection_pool", "~> 3.0"
 
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"

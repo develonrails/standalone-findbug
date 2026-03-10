@@ -14,7 +14,7 @@ Rails.application.routes.draw do
   get "stats", to: "dashboard#stats"
 
   # Errors
-  resources :errors, only: [:index, :show] do
+  resources :errors, only: [ :index, :show ] do
     member do
       post :resolve
       post :ignore
@@ -23,7 +23,7 @@ Rails.application.routes.draw do
   end
 
   # Performance
-  resources :performance, only: [:index, :show]
+  resources :performance, only: [ :index, :show ]
 
   # Alerts
   resources :alerts do
@@ -34,5 +34,5 @@ Rails.application.routes.draw do
   end
 
   # Projects
-  resources :projects, only: [:index, :new, :create, :show, :destroy]
+  resources :projects, only: [ :index, :new, :create, :show, :destroy ]
 end

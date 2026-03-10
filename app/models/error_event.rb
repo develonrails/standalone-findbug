@@ -15,8 +15,8 @@ class ErrorEvent < ApplicationRecord
 
   validates :fingerprint, presence: true
   validates :exception_class, presence: true
-  validates :status, inclusion: { in: [STATUS_UNRESOLVED, STATUS_RESOLVED, STATUS_IGNORED] }
-  validates :severity, inclusion: { in: [SEVERITY_ERROR, SEVERITY_WARNING, SEVERITY_INFO] }
+  validates :status, inclusion: { in: [ STATUS_UNRESOLVED, STATUS_RESOLVED, STATUS_IGNORED ] }
+  validates :severity, inclusion: { in: [ SEVERITY_ERROR, SEVERITY_WARNING, SEVERITY_INFO ] }
 
   scope :unresolved, -> { where(status: STATUS_UNRESOLVED) }
   scope :resolved, -> { where(status: STATUS_RESOLVED) }

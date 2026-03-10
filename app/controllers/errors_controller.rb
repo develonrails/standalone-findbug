@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class ErrorsController < ApplicationController
-  before_action :set_error, only: [:show, :resolve, :ignore, :reopen]
+  before_action :set_error, only: [ :show, :resolve, :ignore, :reopen ]
 
   def index
     @errors = scope_to_project(ErrorEvent).all

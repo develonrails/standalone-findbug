@@ -101,7 +101,7 @@ class SentryEventMapper
 
     def generate_fingerprint(payload, exception_class, message)
       # Use Sentry's fingerprint if provided
-      if payload["fingerprint"].is_a?(Array) && payload["fingerprint"] != ["{{ default }}"]
+      if payload["fingerprint"].is_a?(Array) && payload["fingerprint"] != [ "{{ default }}" ]
         return Digest::SHA256.hexdigest(payload["fingerprint"].join("|"))
       end
 
@@ -111,9 +111,9 @@ class SentryEventMapper
       location = if frames.is_a?(Array) && frames.any?
                    frame = frames.last
                    "#{frame['filename']}:#{frame['lineno']}"
-                 else
+      else
                    ""
-                 end
+      end
 
       Digest::SHA256.hexdigest("#{exception_class}|#{location}")
     end

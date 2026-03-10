@@ -3,7 +3,7 @@
 require "ostruct"
 
 class AlertsController < ApplicationController
-  before_action :set_alert_channel, only: [:edit, :update, :destroy, :toggle, :test]
+  before_action :set_alert_channel, only: [ :edit, :update, :destroy, :toggle, :test ]
 
   def index
     @channels = AlertChannel.order(created_at: :asc)

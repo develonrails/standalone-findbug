@@ -29,8 +29,8 @@ class CreateErrorEvents < ActiveRecord::Migration[8.1]
     add_index :findbug_error_events, :severity
     add_index :findbug_error_events, :last_seen_at
     add_index :findbug_error_events, :created_at
-    add_index :findbug_error_events, [:status, :last_seen_at]
-    add_index :findbug_error_events, [:exception_class, :created_at]
-    add_index :findbug_error_events, [:project_id, :fingerprint], name: "idx_error_events_project_fingerprint"
+    add_index :findbug_error_events, [ :status, :last_seen_at ]
+    add_index :findbug_error_events, [ :exception_class, :created_at ]
+    add_index :findbug_error_events, [ :project_id, :fingerprint ], name: "idx_error_events_project_fingerprint"
   end
 end

@@ -28,10 +28,10 @@ module Findbug
           case obj
           when Hash
             obj.each_with_object({}) do |(key, value), result|
-              result[key] = sensitive_key?(key) ? FILTERED : deep_scrub(value, path + [key])
+              result[key] = sensitive_key?(key) ? FILTERED : deep_scrub(value, path + [ key ])
             end
           when Array
-            obj.map.with_index { |item, i| deep_scrub(item, path + [i]) }
+            obj.map.with_index { |item, i| deep_scrub(item, path + [ i ]) }
           when String
             scrub_string(obj)
           else

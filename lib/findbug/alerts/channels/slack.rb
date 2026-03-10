@@ -21,7 +21,7 @@ module Findbug
             channel: config[:channel],
             username: config[:username] || "Findbug",
             icon_emoji: config[:icon_emoji] || ":bug:",
-            attachments: [{
+            attachments: [ {
               color: severity_color(error_event.severity),
               title: error_event.exception_class.to_s,
               title_link: error_url(error_event),
@@ -29,7 +29,7 @@ module Findbug
               fields: build_fields(error_event),
               footer: "Findbug | #{error_event.environment}",
               ts: error_event.last_seen_at.to_i
-            }.compact]
+            }.compact ]
           }.compact
         end
 

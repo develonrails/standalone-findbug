@@ -20,7 +20,7 @@ module Findbug
           {
             username: config[:username] || "Findbug",
             avatar_url: config[:avatar_url],
-            embeds: [{
+            embeds: [ {
               title: error_event.exception_class.truncate(256),
               description: error_event.message.to_s.truncate(2048),
               color: severity_color_decimal(error_event.severity),
@@ -28,7 +28,7 @@ module Findbug
               fields: build_fields(error_event),
               footer: { text: "Findbug | #{error_event.environment}" },
               timestamp: error_event.last_seen_at.iso8601
-            }.compact]
+            }.compact ]
           }.compact
         end
 

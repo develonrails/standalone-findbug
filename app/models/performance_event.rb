@@ -107,11 +107,11 @@ class PerformanceEvent < ApplicationRecord
 
   def self.throughput_over_time(since: 24.hours.ago, interval: "hour")
     time_column = case interval
-                  when "minute" then "date_trunc('minute', captured_at)"
-                  when "hour" then "date_trunc('hour', captured_at)"
-                  when "day" then "date_trunc('day', captured_at)"
-                  else "date_trunc('hour', captured_at)"
-                  end
+    when "minute" then "date_trunc('minute', captured_at)"
+    when "hour" then "date_trunc('hour', captured_at)"
+    when "day" then "date_trunc('day', captured_at)"
+    else "date_trunc('hour', captured_at)"
+    end
 
     where("captured_at >= ?", since)
       .group(Arel.sql(time_column))

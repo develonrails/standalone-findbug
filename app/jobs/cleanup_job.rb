@@ -17,7 +17,7 @@ class CleanupJob < ApplicationJob
   def cleanup_errors
     cutoff = retention_days.days.ago
     delete_in_batches(
-      ErrorEvent.where(status: [ErrorEvent::STATUS_RESOLVED, ErrorEvent::STATUS_IGNORED])
+      ErrorEvent.where(status: [ ErrorEvent::STATUS_RESOLVED, ErrorEvent::STATUS_IGNORED ])
                 .where("last_seen_at < ?", cutoff)
     )
     # Very old unresolved errors (3x retention)

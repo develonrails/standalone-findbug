@@ -31,6 +31,6 @@ class CreatePerformanceEvents < ActiveRecord::Migration[8.1]
     add_index :findbug_performance_events, :captured_at, name: "idx_fb_perf_captured_at"
     add_index :findbug_performance_events, :duration_ms, name: "idx_fb_perf_duration"
     add_index :findbug_performance_events, :has_n_plus_one, name: "idx_fb_perf_n_plus_one"
-    add_index :findbug_performance_events, [:transaction_name, :captured_at], name: "idx_fb_perf_txn_captured"
+    add_index :findbug_performance_events, [ :transaction_name, :captured_at ], name: "idx_fb_perf_txn_captured"
   end
 end

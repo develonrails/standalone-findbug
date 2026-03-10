@@ -81,9 +81,9 @@ module Api
 
       @raw_body = if request.headers["Content-Encoding"] == "gzip"
                     ActiveSupport::Gzip.decompress(raw)
-                  else
+      else
                     raw
-                  end
+      end
     rescue Zlib::GzipFile::Error
       # Not actually gzipped, use as-is
       @raw_body = raw

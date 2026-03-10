@@ -1,24 +1,107 @@
-# README
+# Findbug
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Self-hosted error and performance monitoring for Ruby/Rails applications. Compatible with the [Sentry SDK](https://docs.sentry.io/platforms/ruby/) protocol — use `sentry-ruby` and `sentry-rails` gems as clients.
 
-Things you may want to cover:
+## Origin
 
-* Ruby version
+Findbug started as a Rails engine gem ([develonrails/findbug](https://github.com/develonrails/findbug)) that embedded error tracking directly into a Rails application. This standalone version extracts it into its own service, adding:
 
-* System dependencies
+- **Multi-project support** — Monitor multiple applications from a single Findbug instance via DSN-based project separation
+- **Sentry SDK compatibility** — Receives data via the standard Sentry envelope protocol (`POST /api/:project_id/envelope/`), so you can use the official `sentry-rails` gem as a client
+- **Independent deployment** — Runs as its own Docker Compose stack with PostgreSQL and Valkey
 
-* Configuration
+## Features
 
-* Database creation
+- Error tracking with grouping by fingerprint, backtrace, and context
+- Performance monitoring with duration, DB time, and view time breakdown
+- N+1 query detection from Sentry transaction spans
+- Configurable alert channels (Slack, Discord, email, webhook)
+- Data scrubbing for sensitive fields (passwords, tokens, credit cards)
+- Redis/Valkey buffering with circuit breaker for resilient ingestion
+- Dark theme dashboard
 
-* Database initialization
+## Quick Start
 
-* How to run the test suite
+```bash
+# Create a directory and download the compose file
+mkdir findbug && cd findbug
+curl -sL https://raw.githubusercontent.com/develonrails/standalone-findbug/main/docker-compose.yml -o docker-compose.yml
+curl -sL https://raw.githubusercontent.com/develonrails/standalone-findbug/main/.env.example -o .env
 
-* Services (job queues, cache servers, search engines, etc.)
+# Edit .env — set SECRET_KEY_BASE and POSTGRES_PASSWORD
+# Generate a secret: openssl rand -hex 64
+nano .env
 
-* Deployment instructions
+# Start
+docker compose up -d
+```
 
-* ...
+The dashboard will be available at `http://your-server-ip`. Create a project to get a DSN.
+
+## Client Configuration
+
+In your Rails application:
+
+```ruby
+# Gemfile
+gem "sentry-ruby"
+gem "sentry-rails"
+
+# config/initializers/sentry.rb
+Sentry.init do |config|
+  config.dsn = "http://<dsn_key>@<findbug-host>/<project_id>"
+  config.breadcrumbs_logger = [:active_support_logger, :http_logger]
+  config.traces_sample_rate = 1.0
+end
+```
+
+## Environment Variables
+
+| Variable | Required | Default | Description |
+|----------|----------|---------|-------------|
+| `SECRET_KEY_BASE` | Yes | — | Rails secret key (generate with `openssl rand -hex 64`) |
+| `POSTGRES_PASSWORD` | Yes | `findbug` | PostgreSQL password |
+| `FINDBUG_HOST` | No | `localhost` | Host shown in DSN URLs |
+| `FINDBUG_USERNAME` | No | — | HTTP basic auth username (empty = no auth) |
+| `FINDBUG_PASSWORD` | No | — | HTTP basic auth password |
+| `PORT` | No | `80` | Port to expose the web UI |
+
+## Architecture
+
+```
+sentry-rails SDK  →  POST /api/:project_id/envelope/
+                            ↓
+                     IngestController (authenticate DSN, parse envelope)
+                            ↓
+                     Valkey buffer (fast, non-blocking)
+                            ↓
+                     PersistJob (every 30s via SolidQueue)
+                            ↓
+                     PostgreSQL (error_events, performance_events)
+                            ↓
+                     AlertJob → Slack / Discord / Email / Webhook
+```
+
+## Stack
+
+- Ruby 3.4 / Rails 8.1
+- PostgreSQL 18
+- Valkey 8 (Redis-compatible)
+- SolidQueue for background jobs
+- Thruster for HTTP
+
+## Development
+
+```bash
+# Open in VS Code with devcontainer, or:
+cd .devcontainer && docker compose up -d
+# Enter the container
+deventer findbug
+# Setup and run
+bin/setup
+bin/dev
+```
+
+## License
+
+MIT

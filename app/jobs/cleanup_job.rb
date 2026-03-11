@@ -7,27 +7,33 @@ class CleanupJob < ApplicationJob
 
   def perform
     return unless Findbug.enabled?
-    cleanup_errors
-    cleanup_performance
+
+    Project.find_each do |project|
+      days = project.retention_days
+      cleanup_errors(project, days)
+      cleanup_performance(project, days)
+    end
+
     Rails.logger.info("[Findbug] Cleanup completed")
   end
 
   private
 
-  def cleanup_errors
-    cutoff = retention_days.days.ago
+  def cleanup_errors(project, days)
+    cutoff = days.days.ago
     delete_in_batches(
-      ErrorEvent.where(status: [ ErrorEvent::STATUS_RESOLVED, ErrorEvent::STATUS_IGNORED ])
-                .where("last_seen_at < ?", cutoff)
+      project.error_events
+             .where(status: [ ErrorEvent::STATUS_RESOLVED, ErrorEvent::STATUS_IGNORED ])
+             .where("last_seen_at < ?", cutoff)
     )
     delete_in_batches(
-      ErrorEvent.unresolved.where("last_seen_at < ?", (retention_days * 3).days.ago)
+      project.error_events.unresolved.where("last_seen_at < ?", (days * 3).days.ago)
     )
   end
 
-  def cleanup_performance
+  def cleanup_performance(project, days)
     delete_in_batches(
-      PerformanceEvent.where("captured_at < ?", retention_days.days.ago)
+      project.performance_events.where("captured_at < ?", days.days.ago)
     )
   end
 
@@ -36,9 +42,5 @@ class CleanupJob < ApplicationJob
       deleted = scope.limit(BATCH_SIZE).delete_all
       break if deleted < BATCH_SIZE
     end
-  end
-
-  def retention_days
-    Findbug.config.retention_days
   end
 end

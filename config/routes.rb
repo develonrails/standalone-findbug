@@ -34,5 +34,5 @@ Rails.application.routes.draw do
   end
 
   # Projects
-  resources :projects, only: [ :index, :new, :create, :show, :destroy ]
+  resources :projects, only: [ :index, :new, :create, :show, :destroy, :update ]
 end

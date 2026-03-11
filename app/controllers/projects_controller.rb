@@ -36,6 +36,21 @@ class ProjectsController < ApplicationController
     }
   end
 
+  def update
+    @project = Project.find(params[:id])
+    if @project.update(project_params)
+      flash_success "Project \"#{@project.name}\" updated"
+      redirect_to @project
+    else
+      flash_error @project.errors.full_messages.join(", ")
+      @event_counts = {
+        errors: @project.error_events.count,
+        performance: @project.performance_events.count
+      }
+      render :show, status: :unprocessable_entity
+    end
+  end
+
   def destroy
     @project = Project.find(params[:id])
     name = @project.name
@@ -47,6 +62,6 @@ class ProjectsController < ApplicationController
   private
 
   def project_params
-    params.require(:project).permit(:name, :platform)
+    params.require(:project).permit(:name, :platform, :retention_days)
   end
 end

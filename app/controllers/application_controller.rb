@@ -27,6 +27,8 @@ class ApplicationController < ActionController::Base
     elsif session[:project_id].present?
       @current_project = Project.find_by(id: session[:project_id])
     end
+    @current_project ||= projects.first
+    session[:project_id] = @current_project&.id
   end
 
   def current_project

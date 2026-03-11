@@ -207,7 +207,7 @@
           <div class="project-switcher">
             <%= form_tag root_path, method: :get, style: "display: inline;" do %>
               <%= select_tag :project_id,
-                  options_for_select([["All Projects", ""]] + projects.map { |p| [p.name, p.id] }, current_project&.id),
+                  options_for_select(projects.map { |p| [p.name, p.id] }, current_project&.id),
                   onchange: "this.form.submit()" %>
             <% end %>
           </div>

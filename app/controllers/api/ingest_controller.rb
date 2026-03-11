@@ -27,6 +27,9 @@ module Api
       end
 
       render json: { id: SecureRandom.uuid }, status: :ok
+    rescue StandardError => e
+      Rails.logger.error("[Findbug] Envelope ingestion failed: #{e.class}: #{e.message}")
+      render json: { error: "Ingestion failed" }, status: :bad_request
     end
 
     # POST /api/:project_id/store/

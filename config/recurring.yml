@@ -1,7 +1,4 @@
 development: &shared
-  persist_events:
-    class: PersistJob
-    schedule: every 30 seconds
   cleanup_old_events:
     class: CleanupJob
     schedule: at 3am every day
